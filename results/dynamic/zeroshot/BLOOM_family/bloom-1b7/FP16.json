@@ -1,0 +1,22 @@
+{
+  "model": "bigscience/bloom-1b7",
+  "experiment": "FP16",
+  "extra_args": [],
+  "results": {
+    "lambada": {
+      "acc": 0.4185
+    },
+    "piqa": {
+      "acc": 0.6751
+    },
+    "arc_easy": {
+      "acc": 0.4391
+    },
+    "arc_challenge": {
+      "acc": 0.2557
+    },
+    "storycloze": {
+      "acc": 0.6354
+    }
+  }
+}

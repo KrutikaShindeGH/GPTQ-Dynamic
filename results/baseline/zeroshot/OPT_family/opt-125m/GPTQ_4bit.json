@@ -1,0 +1,29 @@
+{
+  "model": "facebook/opt-125m",
+  "experiment": "GPTQ_4bit",
+  "extra_args": [
+    "--wbits",
+    "4"
+  ],
+  "results": {
+    "lambada": {
+      "ppl": 28.466724890123096,
+      "acc": 0.38210751018823985
+    },
+    "piqa": {
+      "acc": 0.6196953210010882,
+      "acc_norm": 0.6202393906420022
+    },
+    "arc_easy": {
+      "acc": 0.4246632996632997,
+      "acc_norm": 0.39015151515151514
+    },
+    "arc_challenge": {
+      "acc": 0.181740614334471,
+      "acc_norm": 0.22696245733788395
+    },
+    "storycloze": {
+      "acc": 0.5958
+    }
+  }
+}

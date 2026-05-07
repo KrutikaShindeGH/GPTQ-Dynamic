@@ -1,0 +1,26 @@
+{
+  "model": "bigscience/bloom-1b7",
+  "experiment": "RTN_4bit",
+  "extra_args": [
+    "--wbits",
+    "4",
+    "--nearest"
+  ],
+  "results": {
+    "lambada": {
+      "acc": 0.4192
+    },
+    "piqa": {
+      "acc": 0.6774
+    },
+    "arc_easy": {
+      "acc": 0.447
+    },
+    "arc_challenge": {
+      "acc": 0.2645
+    },
+    "storycloze": {
+      "acc": 0.6295
+    }
+  }
+}

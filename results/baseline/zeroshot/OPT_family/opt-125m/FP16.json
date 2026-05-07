@@ -1,0 +1,26 @@
+{
+  "model": "facebook/opt-125m",
+  "experiment": "FP16",
+  "extra_args": [],
+  "results": {
+    "lambada": {
+      "ppl": 24.241759758704713,
+      "acc": 0.3914224723462061
+    },
+    "piqa": {
+      "acc": 0.6289445048966268,
+      "acc_norm": 0.6191512513601741
+    },
+    "arc_easy": {
+      "acc": 0.4356060606060606,
+      "acc_norm": 0.398989898989899
+    },
+    "arc_challenge": {
+      "acc": 0.19027303754266212,
+      "acc_norm": 0.22696245733788395
+    },
+    "storycloze": {
+      "acc": 0.5996
+    }
+  }
+}

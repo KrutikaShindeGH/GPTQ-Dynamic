@@ -1,0 +1,6 @@
+=== GPTQ Experiments - opt-350m ===
+
+=== FP16 Baseline ===
+wikitext2 : 22.00278663635254
+ptb : 27.21402931213379
+c4 : 20.714584350585938

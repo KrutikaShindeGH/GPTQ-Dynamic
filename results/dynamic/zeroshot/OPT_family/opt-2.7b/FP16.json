@@ -1,0 +1,22 @@
+{
+  "model": "facebook/opt-2.7b",
+  "experiment": "FP16",
+  "extra_args": [],
+  "results": {
+    "lambada": {
+      "acc": 0.5922
+    },
+    "piqa": {
+      "acc": 0.7307
+    },
+    "arc_easy": {
+      "acc": 0.5138
+    },
+    "arc_challenge": {
+      "acc": 0.2931
+    },
+    "storycloze": {
+      "acc": 0.6974
+    }
+  }
+}

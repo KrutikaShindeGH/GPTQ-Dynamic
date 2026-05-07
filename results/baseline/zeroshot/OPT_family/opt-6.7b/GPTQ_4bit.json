@@ -1,0 +1,35 @@
+{
+  "results": {
+    "lambada": {
+      "ppl": 4.6112657865640925,
+      "acc": 0.6648554240248399
+    },
+    "arc_challenge": {
+      "acc": 0.2986348122866894,
+      "acc_norm": 0.33276450511945393
+    },
+    "arc_easy": {
+      "acc": 0.6452020202020202,
+      "acc_norm": 0.5909090909090909
+    },
+    "piqa": {
+      "acc": 0.7546245919477693,
+      "acc_norm": 0.766050054406964
+    },
+    "storycloze": {
+      "acc": 0.739
+    }
+  },
+  "versions": {
+    "lambada": 0,
+    "arc_challenge": 0,
+    "arc_easy": 0,
+    "piqa": 0
+  },
+  "config": {
+    "model": "facebook/opt-6.7b",
+    "num_fewshot": 0,
+    "batch_size": 1,
+    "bootstrap_iters": 1000
+  }
+}

@@ -1,0 +1,6 @@
+=== GPTQ Experiments - bloom-1b1 ===
+
+=== FP16 Baseline ===
+wikitext2 : 21.20412826538086
+ptb : 54.04179763793945
+c4 : 23.888999938964844

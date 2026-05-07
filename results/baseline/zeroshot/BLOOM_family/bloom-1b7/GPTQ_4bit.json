@@ -1,0 +1,25 @@
+{
+  "model": "bigscience/bloom-1b7",
+  "experiment": "GPTQ_4bit",
+  "extra_args": [
+    "--wbits",
+    "4"
+  ],
+  "results": {
+    "lambada": {
+      "acc": 0.4628
+    },
+    "piqa": {
+      "acc": 0.6877
+    },
+    "arc_easy": {
+      "acc": 0.4449
+    },
+    "arc_challenge": {
+      "acc": 0.2594
+    },
+    "storycloze": {
+      "acc": 0.6448
+    }
+  }
+}
