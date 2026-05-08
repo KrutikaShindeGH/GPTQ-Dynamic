@@ -1,5 +1,34 @@
 # Dynamic Hessian-Based Precision Scaling for Post-Training Quantization
 
+The deployment of Large Language Models
+(LLMs) is fundamentally constrained by high
+computational overhead. Post-Training Quantization
+(PTQ), specifically the Generative Pre-
+Trained Transformer Quantization (GPTQ) algorithm,
+has emerged as a leading method for
+compressing model weights by utilizing Hessian
+information to compensate for quantization
+error. However, standard GPTQ applies
+a uniform bit-width across all layers, which
+leads to suboptimal performance. In this work,
+we propose a dynamic, per-layer precision scaling
+method based on global loss sensitivity to
+optimize bit-width allocation. Our framework
+(Algorithm 1) profiles each layer’s sensitivity
+using the Fisher Information Matrix (FIM), allocates
+bit-widths via a greedy constrained optimization,
+and compensates for quantization
+error using a modified GPTQ second-order update
+rule. In our experiments the method is
+labelled FP16 (Dynamic) to reflect that it operates
+at a mixed average bit-rate. We evaluate on
+the OPT and BLOOM model families and show
+that FP16 (Dynamic) achieves lower perplexity
+than uniform GPTQ at matched bit-rates
+across WikiText2, PTB, and C4 benchmarks,
+with competitive zero-shot accuracy on LAMBADA,
+ARC, PIQA, and StoryCloze.
+
 
 ## Repository Structure
 
