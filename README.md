@@ -34,7 +34,7 @@ ARC, PIQA, and StoryCloze.
 
 ```
 combined_project/
-├── 1_baseline_GPTQ/          # Uniform GPTQ baseline (Frantar et al., 2022)
+├── baseline_GPTQ/          # Uniform GPTQ baseline (Frantar et al., 2022)
 │   ├── gptq.py               # Core GPTQ quantization algorithm
 │   ├── opt.py                # OPT model quantization entry point
 │   ├── bloom.py              # BLOOM model quantization entry point
@@ -51,7 +51,7 @@ combined_project/
 │       ├── tasks/            # LAMBADA, ARC, PIQA, StoryCloze tasks
 │       └── models/           # Model wrappers for zero-shot eval
 │
-├── 2_dynamic_GPTQ/           # Our proposed method: Dynamic Hessian-Based Precision Scaling
+├── dynamic_GPTQ/           # Our proposed method: Dynamic Hessian-Based Precision Scaling
 │   ├── main.py               # Entry point — runs Algorithm 1 end-to-end
 │   ├── gptq.py               # Modified GPTQ with per-layer bit-width support
 │   ├── opt.py                # OPT model with dynamic precision scaling
@@ -61,7 +61,7 @@ combined_project/
 │   ├── datautils.py          # Calibration data loading
 │   └── modelutils.py         # Model utility functions
 │
-└── 3_results/                # Experimental results (Tables 1–11 in the report)
+└── results/                # Experimental results (Tables 1–11 in the report)
     ├── baseline/
     │   ├── perplexity/       # WikiText2, PTB, C4 perplexity for FP16, RTN, GPTQ
     │   │   ├── OPT_family/   # OPT-125M, 350M, 1.3B, 2.7B, 6.7B
@@ -116,7 +116,246 @@ Our framework implements three stages:
 
 ---
 
+## Execution Instructions
+
+### Requirements
+
+```bash
+pip install torch transformers datasets numpy
+```
+
+To enable the fast CUDA quantization kernel (recommended for models ≥ 1.3B):
+
+```bash
+cd baseline_GPTQ/
+python setup_cuda.py build_ext --inplace
+```
+
+---
+
+### 1. Baseline GPTQ
+
+All baseline commands are run from the `baseline_GPTQ/` directory.
+
+#### Perplexity Evaluation
+
+**OPT models — FP16 baseline:**
+```bash
+python opt.py facebook/opt-125m c4
+python opt.py facebook/opt-350m c4
+python opt.py facebook/opt-1.3b c4
+python opt.py facebook/opt-2.7b c4
+python opt.py facebook/opt-6.7b c4
+```
+
+**OPT models — RTN 4-bit:**
+```bash
+python opt.py facebook/opt-125m c4 --wbits 4 --nearest
+python opt.py facebook/opt-350m c4 --wbits 4 --nearest
+python opt.py facebook/opt-1.3b  c4 --wbits 4 --nearest
+python opt.py facebook/opt-2.7b  c4 --wbits 4 --nearest
+python opt.py facebook/opt-6.7b  c4 --wbits 4 --nearest
+```
+
+**OPT models — GPTQ 4-bit:**
+```bash
+python opt.py facebook/opt-125m c4 --wbits 4
+python opt.py facebook/opt-350m c4 --wbits 4
+python opt.py facebook/opt-1.3b  c4 --wbits 4
+python opt.py facebook/opt-2.7b  c4 --wbits 4
+python opt.py facebook/opt-6.7b  c4 --wbits 4
+```
+
+**OPT models — GPTQ 3-bit:**
+```bash
+python opt.py facebook/opt-125m c4 --wbits 3
+python opt.py facebook/opt-350m c4 --wbits 3
+python opt.py facebook/opt-1.3b  c4 --wbits 3
+python opt.py facebook/opt-2.7b  c4 --wbits 3
+python opt.py facebook/opt-6.7b  c4 --wbits 3
+```
+
+**OPT models — GPTQ 4-bit with group-size 128:**
+```bash
+python opt.py facebook/opt-125m c4 --wbits 4 --groupsize 128
+python opt.py facebook/opt-350m c4 --wbits 4 --groupsize 128
+python opt.py facebook/opt-1.3b  c4 --wbits 4 --groupsize 128
+python opt.py facebook/opt-2.7b  c4 --wbits 4 --groupsize 128
+python opt.py facebook/opt-6.7b  c4 --wbits 4 --groupsize 128
+```
+
+**BLOOM models — FP16 baseline:**
+```bash
+python bloom.py bigscience/bloom-560m  c4
+python bloom.py bigscience/bloom-1b1   c4
+python bloom.py bigscience/bloom-1b7   c4
+python bloom.py bigscience/bloom-3b    c4
+python bloom.py bigscience/bloom-7b1   c4
+```
+
+**BLOOM models — RTN 4-bit:**
+```bash
+python bloom.py bigscience/bloom-560m c4 --wbits 4 --nearest
+python bloom.py bigscience/bloom-1b1  c4 --wbits 4 --nearest
+python bloom.py bigscience/bloom-1b7  c4 --wbits 4 --nearest
+python bloom.py bigscience/bloom-3b   c4 --wbits 4 --nearest
+python bloom.py bigscience/bloom-7b1  c4 --wbits 4 --nearest
+```
+
+**BLOOM models — GPTQ 4-bit:**
+```bash
+python bloom.py bigscience/bloom-560m c4 --wbits 4
+python bloom.py bigscience/bloom-1b1  c4 --wbits 4
+python bloom.py bigscience/bloom-1b7  c4 --wbits 4
+python bloom.py bigscience/bloom-3b   c4 --wbits 4
+python bloom.py bigscience/bloom-7b1  c4 --wbits 4
+```
+
+**BLOOM models — GPTQ 3-bit:**
+```bash
+python bloom.py bigscience/bloom-560m c4 --wbits 3
+python bloom.py bigscience/bloom-1b1  c4 --wbits 3
+python bloom.py bigscience/bloom-1b7  c4 --wbits 3
+python bloom.py bigscience/bloom-3b   c4 --wbits 3
+python bloom.py bigscience/bloom-7b1  c4 --wbits 3
+```
+
+> The calibration dataset argument (`c4`) can be replaced with `wikitext2` or `ptb`
+> to calibrate on a different dataset. Perplexity is always reported on all three.
+
+#### Zero-Shot Evaluation
+
+Zero-shot evaluation uses a saved quantized model checkpoint. First save the quantized
+weights, then run the zero-shot harness.
+
+**Save quantized weights (example — OPT-1.3B GPTQ 4-bit):**
+```bash
+python opt.py facebook/opt-1.3b c4 --wbits 4 --save opt-1.3b-4bit.pt
+```
+
+**Run zero-shot evaluation:**
+```bash
+python zeroShot/main.py \
+    --model facebook/opt-1.3b \
+    --load opt-1.3b-4bit.pt \
+    --task lambada piqa arc_easy arc_challenge storycloze
+```
+
+Repeat the save + eval pattern for each model and bit-width. For the FP16 baseline,
+omit `--load` and do not pass `--wbits`:
+```bash
+python zeroShot/main.py \
+    --model facebook/opt-1.3b \
+    --task lambada piqa arc_easy arc_challenge storycloze
+```
+
+---
+
+### 2. Dynamic GPTQ (Ours)
+
+All dynamic commands are run from the `dynamic_GPTQ/` directory.
+
+#### Perplexity Evaluation
+
+`main.py` runs the full Algorithm 1 pipeline (sensitivity profiling → bit allocation →
+quantization) in a single call. The key argument is `--target_bits`, which sets the
+global average bit-rate constraint `Btarget`.
+
+**OPT models — Dynamic 4-bit (Btarget = 4):**
+```bash
+python main.py facebook/opt-125m c4 --target_bits 4
+python main.py facebook/opt-350m c4 --target_bits 4
+python main.py facebook/opt-1.3b  c4 --target_bits 4
+python main.py facebook/opt-2.7b  c4 --target_bits 4
+python main.py facebook/opt-6.7b  c4 --target_bits 4
+```
+
+**OPT models — Dynamic 3-bit (Btarget = 3):**
+```bash
+python main.py facebook/opt-125m c4 --target_bits 3
+python main.py facebook/opt-350m c4 --target_bits 3
+python main.py facebook/opt-1.3b  c4 --target_bits 3
+python main.py facebook/opt-2.7b  c4 --target_bits 3
+python main.py facebook/opt-6.7b  c4 --target_bits 3
+```
+
+**BLOOM models — Dynamic 4-bit (Btarget = 4):**
+```bash
+python main.py bigscience/bloom-560m c4 --target_bits 4
+python main.py bigscience/bloom-1b1  c4 --target_bits 4
+python main.py bigscience/bloom-1b7  c4 --target_bits 4
+python main.py bigscience/bloom-3b   c4 --target_bits 4
+python main.py bigscience/bloom-7b1  c4 --target_bits 4
+```
+
+**BLOOM models — Dynamic 3-bit (Btarget = 3):**
+```bash
+python main.py bigscience/bloom-560m c4 --target_bits 3
+python main.py bigscience/bloom-1b1  c4 --target_bits 3
+python main.py bigscience/bloom-1b7  c4 --target_bits 3
+python main.py bigscience/bloom-3b   c4 --target_bits 3
+python main.py bigscience/bloom-7b1  c4 --target_bits 3
+```
+
+#### Zero-Shot Evaluation
+
+Save the dynamically quantized model, then evaluate with the same zero-shot harness
+from `baseline_GPTQ/zeroShot/`.
+
+**Save dynamic quantized weights:**
+```bash
+python main.py facebook/opt-1.3b c4 --target_bits 4 --save opt-1.3b-dynamic-4bit.pt
+```
+
+**Run zero-shot evaluation:**
+```bash
+python ../baseline_GPTQ/zeroShot/main.py \
+    --model facebook/opt-1.3b \
+    --load opt-1.3b-dynamic-4bit.pt \
+    --task lambada piqa arc_easy arc_challenge storycloze
+```
+
+---
+
+### 3. Results & Visualization Pipeline
+
+After collecting all results into `3_results/`, run the three visualization scripts
+from the project root (where `3_results/` lives).
+
+**Step 1 — Parse all results into a single JSON:**
+```bash
+python script1_parse_results.py --results_root ./3_results
+```
+Output: `results_data.json`
+
+**Step 2 — Generate all tables (PNG + CSV):**
+```bash
+python script2_tables.py --data results_data.json --out_dir tables/
+```
+Output: `tables/table_*.png` and `tables/table_*.csv`
+
+**Step 3 — Generate all figures (PNG):**
+```bash
+python script3_figures.py --data results_data.json --out_dir figures/
+```
+Output: `figures/fig*.png`
+
+> **Re-running after adding dynamic results:** once dynamic perplexity `.txt` files and
+> zero-shot `.json` files are placed under `3_results/dynamic/`, simply re-run Steps 1–3
+> above. The scripts auto-detect `Dynamic_4bit` and `Dynamic_3bit` experiments and
+> include them in all tables and figures automatically.
+
+#### Running in Google Colab
+
+Use `colab_runner.py` as a guide. Copy each cell block into a separate Colab cell and
+run top-to-bottom. Before running, set `REPO_ROOT` at the top of Cell 1 to point to
+your project directory using one of the three options provided (GitHub clone, manual
+zip upload, or Google Drive mount).
+
+---
+
 ## Reference
 
 Frantar et al. (2022). *GPTQ: Accurate Post-Training Quantization for Generative
 Pre-Trained Transformers.* arXiv:2210.17323
+
